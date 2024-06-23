@@ -1,0 +1,11 @@
+{
+  "name": "node_project",
+  "version": "1.0.0",
+  "description": "Backend project to learn industry label project code and setup for backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sumit",
+  "license": "ISC"
+}
