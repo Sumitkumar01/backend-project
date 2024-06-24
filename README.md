@@ -2,3 +2,4 @@
 
 
 - [model links]
+- node js error class
