@@ -23,4 +23,13 @@ app.use(express.static('public')); // to serve static files
 app.use(cookieParser()); // to support cookies
 
 
+// routes 
+
+import userRiuter from './routes/user.routes.js'
+
+
+// routes declaration 
+
+app.use("/api/v1/users", userRiuter)
+
 export { app }
