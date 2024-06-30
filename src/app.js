@@ -1,7 +1,6 @@
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 /*
@@ -18,18 +17,16 @@ app.use(express.json()); // to support JSON-encoded bodies
 
 app.use(express.urlencoded({ extended: true })); // to support URL-encoded bodies
 
-app.use(express.static('public')); // to serve static files
+app.use(express.static("public")); // to serve static files
 
 app.use(cookieParser()); // to support cookies
 
+// routes
 
-// routes 
+import userRiuter from "./routes/user.routes.js";
 
-import userRiuter from './routes/user.routes.js'
+// routes declaration
 
+app.use("/api/v1/users", userRiuter);
 
-// routes declaration 
-
-app.use("/api/v1/users", userRiuter)
-
-export { app }
+export { app };
