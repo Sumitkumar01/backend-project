@@ -169,6 +169,7 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+
 const LogOutUser = asyncHandler(async (req, res) => {
   //
   await User.findByIdAndUpdate(
@@ -196,7 +197,8 @@ const LogOutUser = asyncHandler(async (req, res) => {
 });
 
 const refershAccessToken = asyncHandler(async (req, res) => {
-  const inComingRefreshToken = req.cookie.refreshToken || req.body.refreshToken;
+  const inComingRefreshToken =
+    req.cookies?.refreshToken || req.body?.refreshToken;
 
   if (!inComingRefreshToken) {
     throw new ApiError(401, "unauthorized request");
@@ -234,9 +236,9 @@ const refershAccessToken = asyncHandler(async (req, res) => {
           {
             user,
             accessToken,
-            newRefreshTokenefreshToken,
+            newRefreshToken,
           },
-          "Access Token refreshed successfully"
+          "Access token regenerated successfully"
         )
       );
   } catch (error) {
@@ -245,3 +247,4 @@ const refershAccessToken = asyncHandler(async (req, res) => {
 });
 
 export { registerUser, loginUser, LogOutUser, refershAccessToken };
+
