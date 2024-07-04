@@ -170,7 +170,7 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
-// ****************Lo
+// ****************LogOut User*******************//
 const LogOutUser = asyncHandler(async (req, res) => {
   //
   await User.findByIdAndUpdate(
@@ -197,6 +197,7 @@ const LogOutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User Logged Out"));
 });
 
+// ******************Refresh access token**********************//
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const inComingRefreshToken =
     req.cookies?.refreshToken || req.body?.refreshToken;
@@ -247,6 +248,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
+// *******************Change Password**********************//
 const changeCurrentUserPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
@@ -267,12 +269,14 @@ const changeCurrentUserPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password change successfully"));
 });
 
+// ******************Get Current User**********************//
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(200, req.user, "current user fetched successfully");
 });
 
+// ******************Update Account Details**********************//
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email } = req.body;
   if (!(fullName || email)) {
@@ -295,6 +299,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Account details updated successfully"));
 });
 
+// ******************Update Avatar**********************//
 const updateUserAvatar = asyncHandler(async (req, res) => {
   const avatarlocalPath = req.file?.path;
 
@@ -323,6 +328,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Avatar updated successfully"));
 });
 
+// ******************Update Cover Image**********************//
 const updateUserCoverImage = asyncHandler(async (req, res) => {
   const coverImageLocalPath = req.file?.path;
 
@@ -351,6 +357,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Cover image updated successfully"));
 });
 
+// ******************Get User Channel Profile**********************//
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
 
@@ -414,6 +421,57 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, channel[0], "Channel fetched successfully"));
 });
+
+// ******************Get Watch History**********************//
+const getWatchHistory = asyncHandler(async (req, res) => {
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
+                  $project: {
+                    _id: 1,
+                    fullName: 1,
+                    username: 1,
+                    avatar: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              owner: {
+                $first: "$owner",
+              },
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user[0], "Watch history fetched successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -425,4 +483,5 @@ export {
   updateUserAvatar,
   updateUserCoverImage,
   getUserChannelProfile,
+  getWatchHistory,
 };
